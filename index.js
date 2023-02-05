@@ -1,12 +1,32 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 
-// A schema is a collection of type definitions (hence "typeDefs")
-// that together define the "shape" of queries that are executed against
-// your data.
+import dotenv from "dotenv";
+dotenv.config();
+const MY_API_KEY = process.env.API_KEY;
+//미세먼지 기본 패쓰
+const DUST_PATH_BASIC = "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc";
+//측정소별 실시간 미세먼지 데이터
+const DUST_URL = "/getCtprvnRltmMesureDnsty";
+
 const typeDefs = `#graphql
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
-
+  type Dust {
+    id: String
+    stationName: String
+    dataTime: String
+    pm10Grade: String
+    pm10Grade1h: String
+    pm10Value: String
+    pm10Value24: String
+    pm25Grade1h: String
+    pm25Value: String
+    pm25Value24: String
+    pm25Grade: String
+    khaiGrade: String
+    khaiValue: String
+    sidoName: String
+  }
   # This "Book" type defines the queryable fields for every book in our data source.
   type Book {
     title: String
@@ -18,6 +38,8 @@ const typeDefs = `#graphql
   # case, the "books" query returns an array of zero or more Books (defined above).
   type Query {
     books: [Book]
+    allDusts: [Dust]
+    
   }
 `;
 
@@ -37,6 +59,18 @@ const books = [
 const resolvers = {
   Query: {
     books: () => books,
+    allDusts() {
+      return fetch(
+        `${DUST_PATH_BASIC}${DUST_URL}?serviceKey=${MY_API_KEY}&numOfRows=100&returnType=json&ver=1.3&sidoName=${encodeURIComponent(
+          "강원"
+        )}`
+      )
+        .then((response) => response.json())
+        .then((r) => r.response.body.items)
+        .then((result) =>
+          result.map((item, index) => ({ id: index + 1, ...item }))
+        );
+    },
   },
 };
 
