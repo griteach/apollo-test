@@ -74,7 +74,7 @@ const resolvers = {
     },
     dust(_, { stationName }) {
       return fetch(
-        `${DUST_PATH_BASIC}${DUST_URL}?serviceKey=${MY_API_KEY}&numOfRows=100&returnType=json&ver=1.3&sidoName=${encodeURIComponent(
+        `${DUST_PATH_BASIC}${DUST_URL}?serviceKey=l72zwz6RqrexXr8a4wslQsw%2Bx0zTGnE5R1sSf26aPRPOQytFjk3AkCOTfssOo1TQ8xQoimJbfkfYL6YZr%2FssIw%3D%3D&numOfRows=100&returnType=json&ver=1.3&sidoName=${encodeURIComponent(
           "강원"
         )}`
       )
