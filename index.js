@@ -39,6 +39,7 @@ const typeDefs = `#graphql
   type Query {
     books: [Book]
     allDusts: [Dust]
+    dust(stationName:String!):Dust
     
   }
 `;
@@ -70,6 +71,24 @@ const resolvers = {
         .then((result) =>
           result.map((item, index) => ({ id: index + 1, ...item }))
         );
+    },
+    dust(_, { stationName }) {
+      return fetch(
+        `${DUST_PATH_BASIC}${DUST_URL}?serviceKey=${MY_API_KEY}&numOfRows=100&returnType=json&ver=1.3&sidoName=${encodeURIComponent(
+          "강원"
+        )}`
+      )
+        .then((response) => response.json())
+        .then((r) => r.response.body.items)
+        .then((result) =>
+          result.map((item, index) => ({ id: (index + 1).toString(), ...item }))
+        )
+        .then((r) => {
+          const result = r.find((item) => item.stationName === stationName);
+          console.log(typeof result.id);
+          console.log(result);
+          return result;
+        });
     },
   },
 };
