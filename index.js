@@ -1,13 +1,24 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
-
 import dotenv from "dotenv";
 dotenv.config();
+import dayjs from "dayjs";
+
 const MY_API_KEY = process.env.API_KEY;
+const today = dayjs().format("YYYYMMDD");
+const todayFormatDash = dayjs().format("YYYY-MM-DD");
+const currentHour = dayjs().get("hour") - 1;
+console.log(today);
+console.log(todayFormatDash);
+console.log(currentHour);
 //미세먼지 기본 패쓰
 const DUST_PATH_BASIC = "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc";
 //측정소별 실시간 미세먼지 데이터
 const DUST_URL = "/getCtprvnRltmMesureDnsty";
+
+//일기예보 기본 패쓰
+const WEATHER_PATH_BASIC =
+  "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst";
 
 const typeDefs = `#graphql
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
@@ -27,39 +38,50 @@ const typeDefs = `#graphql
     khaiValue: String
     sidoName: String
   }
-  # This "Book" type defines the queryable fields for every book in our data source.
-  type Book {
-    title: String
-    author: String
-  }
 
+
+  type Weather {
+    id:String
+    baseDate: String
+    baseTime: String
+    category: String
+    nx: Float
+    ny: Float
+    obsrValue: String
+
+  }
   # The "Query" type is special: it lists all of the available queries that
   # clients can execute, along with the return type for each. In this
   # case, the "books" query returns an array of zero or more Books (defined above).
   type Query {
-    books: [Book]
+    
     allDusts: [Dust]
     dust(stationName:String!):Dust
+    allWeather:[Weather]
     
   }
 `;
-
-const books = [
-  {
-    title: "The Awakening",
-    author: "Kate Chopin",
-  },
-  {
-    title: "City of Glass",
-    author: "Paul Auster",
-  },
-];
 
 // Resolvers define how to fetch the types defined in your schema.
 // This resolver retrieves books from the "books" array above.
 const resolvers = {
   Query: {
-    books: () => books,
+    allWeather() {
+      return fetch(
+        `${WEATHER_PATH_BASIC}?serviceKey=${MY_API_KEY}&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${today}&base_time=${
+          currentHour < 10 ? `0` + currentHour : currentHour
+        }00&nx=75&ny=125`
+      )
+        .then((response) => response.json())
+        .then((r) => r.response.body.items.item)
+        .then((result) =>
+          result.map((item, index) => ({ id: index + 1, ...item }))
+        )
+        .then((r) => {
+          console.log(r);
+          return r;
+        });
+    },
     allDusts() {
       return fetch(
         `${DUST_PATH_BASIC}${DUST_URL}?serviceKey=${MY_API_KEY}&numOfRows=100&returnType=json&ver=1.3&sidoName=${encodeURIComponent(
@@ -70,7 +92,11 @@ const resolvers = {
         .then((r) => r.response.body.items)
         .then((result) =>
           result.map((item, index) => ({ id: index + 1, ...item }))
-        );
+        )
+        .then((r) => {
+          console.log(r);
+          return r;
+        });
     },
     dust(_, { stationName }) {
       return fetch(

@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@apollo/server": "^4.3.2",
+    "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",
     "graphql": "^16.6.0"
   }
