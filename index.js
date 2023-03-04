@@ -90,7 +90,13 @@ const resolvers = {
         .then((response) => response.json())
         .then((r) => r.response.body.items.item)
         .then((r) => {
-          console.log([...r].reverse());
+          console.log(
+            [...r].reverse().filter((item, index) => {
+              if (item.baseDate === today) {
+                return item;
+              }
+            })
+          );
           return r.reverse();
         });
     },
