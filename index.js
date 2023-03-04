@@ -20,6 +20,10 @@ const DUST_URL = "/getCtprvnRltmMesureDnsty";
 const WEATHER_PATH_BASIC =
   "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst";
 
+//단기예보 (최저/최고기온) 기본 패쓰
+const FOCAST_WEATHER_GUESS_PATH_BASIC =
+  "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
+
 const typeDefs = `#graphql
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
   type Dust {
@@ -39,6 +43,16 @@ const typeDefs = `#graphql
     sidoName: String
   }
 
+  type WeatherGuess {
+    baseDate: String
+  baseTime: String
+  category: String
+  fcstDate: String
+  fcstTime: String
+  fcstValue: String
+  nx: Float
+  ny: Float
+  }
 
   type Weather {
     id:String
@@ -58,6 +72,7 @@ const typeDefs = `#graphql
     allDusts: [Dust]
     dust(stationName:String!):Dust
     allWeather:[Weather]
+    allWeatherGuess:[WeatherGuess]
     
   }
 `;
@@ -66,6 +81,19 @@ const typeDefs = `#graphql
 // This resolver retrieves books from the "books" array above.
 const resolvers = {
   Query: {
+    allWeatherGuess() {
+      return fetch(
+        `${WEATHER_PATH_BASIC}?serviceKey=${MY_API_KEY}&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${today}&base_time=${
+          currentHour < 10 ? `0` + currentHour : currentHour
+        }00&nx=75&ny=125`
+      )
+        .then((response) => response.json())
+        .then((r) => r.response.body.items.item)
+        .then((r) => {
+          console.log(r);
+          return r;
+        });
+    },
     allWeather() {
       return fetch(
         `${WEATHER_PATH_BASIC}?serviceKey=${MY_API_KEY}&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${today}&base_time=${
@@ -111,7 +139,7 @@ const resolvers = {
         )
         .then((r) => {
           const result = r.find((item) => item.stationName === stationName);
-          console.log(typeof result.id);
+
           console.log(result);
           return result;
         });
