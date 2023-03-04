@@ -97,7 +97,7 @@ const resolvers = {
           });
           console.log(reverseResult);
 
-          return r.reverse();
+          return reverseResult;
         });
     },
     allWeather() {
