@@ -90,7 +90,7 @@ const resolvers = {
         .then((response) => response.json())
         .then((r) => r.response.body.items.item)
         .then((r) => {
-          console.log(r);
+          console.log([...r].reverse());
           return r.reverse();
         });
     },
