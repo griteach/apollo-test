@@ -83,7 +83,7 @@ const resolvers = {
   Query: {
     allWeatherGuess() {
       return fetch(
-        `${WEATHER_PATH_BASIC}?serviceKey=${MY_API_KEY}&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${today}&base_time=0200&nx=75&ny=125`
+        `${FOCAST_WEATHER_GUESS_PATH_BASIC}?serviceKey=${MY_API_KEY}&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${today}&base_time=0200&nx=75&ny=125`
       )
         .then((response) => response.json())
         .then((r) => r.response.body.items.item)
