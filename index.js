@@ -91,7 +91,7 @@ const resolvers = {
         .then((r) => r.response.body.items.item)
         .then((r) => {
           console.log(r);
-          return r;
+          return r.reverse();
         });
     },
     allWeather() {
