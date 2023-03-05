@@ -94,7 +94,7 @@ const resolvers = {
               return item;
             }
           });
-          console.log(reverseResult);
+          console.log("단기예보 fetching complete");
 
           return reverseResult;
         });
@@ -111,7 +111,7 @@ const resolvers = {
           result.map((item, index) => ({ id: index + 1, ...item }))
         )
         .then((r) => {
-          console.log(r);
+          console.log("allWeather result fetching complete");
           return r;
         });
     },
@@ -127,7 +127,6 @@ const resolvers = {
           result.map((item, index) => ({ id: index + 1, ...item }))
         )
         .then((r) => {
-          console.log(r);
           return r;
         });
     },
@@ -145,7 +144,7 @@ const resolvers = {
         .then((r) => {
           const result = r.find((item) => item.stationName === stationName);
 
-          console.log(result);
+          console.log("측정소 미세먼지 결과 출력", result);
           return result;
         });
     },
