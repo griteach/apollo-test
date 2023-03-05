@@ -89,7 +89,7 @@ const resolvers = {
         .then((response) => response.json())
         .then((r) => r.response.body.items.item)
         .then((r) => {
-          const reverseResult = [...r].reverse().filter((item) => {
+          const reverseResult = r.filter((item) => {
             if (item.fcstDate === today) {
               return item;
             }
