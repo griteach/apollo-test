@@ -5,18 +5,16 @@ dotenv.config();
 import dayjs from "dayjs";
 
 const MY_API_KEY = process.env.API_KEY;
-const today = dayjs().format("YYYYMMDD");
-const todayFormatDash = dayjs().format("YYYY-MM-DD");
-const currentHour = dayjs().get("hour") - 1;
-console.log(today);
-console.log(todayFormatDash);
-console.log(currentHour);
+
+//나이스 급식 정보 패쓰
+const MEAL_PATH_BASIC = "https://open.neis.go.kr/hub/mealServiceDietInfo";
+
 //미세먼지 기본 패쓰
 const DUST_PATH_BASIC = "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc";
 //측정소별 실시간 미세먼지 데이터
 const DUST_URL = "/getCtprvnRltmMesureDnsty";
 
-//일기예보 기본 패쓰
+//초단기 실황조회 일기예보 기본 패쓰
 const WEATHER_PATH_BASIC =
   "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst";
 
@@ -82,6 +80,7 @@ const typeDefs = `#graphql
 const resolvers = {
   Query: {
     allWeatherGuess() {
+      const today = dayjs().format("YYYYMMDD");
       return fetch(
         `${FOCAST_WEATHER_GUESS_PATH_BASIC}?serviceKey=${MY_API_KEY}&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${today}&base_time=0200&nx=75&ny=125`
       )
@@ -99,6 +98,8 @@ const resolvers = {
         });
     },
     allWeather() {
+      const today = dayjs().format("YYYYMMDD");
+      const currentHour = dayjs().get("hour") - 1;
       return fetch(
         `${WEATHER_PATH_BASIC}?serviceKey=${MY_API_KEY}&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${today}&base_time=${
           currentHour < 10 ? `0` + currentHour : currentHour
