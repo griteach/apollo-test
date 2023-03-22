@@ -11,7 +11,8 @@ const MEAL_PATH_BASIC = "https://open.neis.go.kr/hub/mealServiceDietInfo";
 
 //미세먼지 기본 패쓰
 const DUST_PATH_BASIC = "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc";
-//측정소별 실시간 미세먼지 데이터
+
+//시도별 실시간 미세먼지 데이터
 const DUST_URL = "/getCtprvnRltmMesureDnsty";
 
 //초단기 실황조회 일기예보 기본 패쓰
@@ -40,6 +41,10 @@ const typeDefs = `#graphql
     khaiValue: String
     o3Value:String
     o3Grade:String
+    coValue:String
+    coGrade:String
+    no2Value:String
+    no2Grade:String
     sidoName: String
   }
 
