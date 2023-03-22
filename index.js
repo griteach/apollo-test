@@ -38,6 +38,8 @@ const typeDefs = `#graphql
     pm25Grade: String
     khaiGrade: String
     khaiValue: String
+    o3Value:String
+    o3Grade:string
     sidoName: String
   }
 
