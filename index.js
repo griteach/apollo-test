@@ -39,7 +39,7 @@ const typeDefs = `#graphql
     khaiGrade: String
     khaiValue: String
     o3Value:String
-    o3Grade:string
+    o3Grade:String
     sidoName: String
   }
 
