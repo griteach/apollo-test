@@ -230,7 +230,7 @@ const resolvers = {
       const today = dayjs().format("YYYYMMDD");
 
       return fetch(
-        `${MEDIUM_TEMP}?serviceKey=${MY_API_KEY}&numOfRows=10&dataType=json&regId=11D10401&tmFc=${today}0600`
+        `${MEDIUM_TEMP}?serviceKey=${MY_API_KEY}&numOfRows=10&dataType=json&regId=11D10401&tmFc=202303251800`
       )
         .then((response) => response.json())
         .then((r) => {
