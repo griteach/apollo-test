@@ -31,19 +31,19 @@ const typeDefs = `#graphql
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
   type MediumLand{
     regId: String
-    rnSt3Am: Number
-    rnSt3Pm: Number
-    rnSt4Am: Number
-    rnSt4Pm: Number
-    rnSt5Am: Number
-    rnSt5Pm: Number
-    rnSt6Am: Number
-    rnSt6Pm: Number
-    rnSt7Am: Number
-    rnSt7Pm: Number
-    rnSt8: Number
-    rnSt9: Number
-    rnSt10: Number
+    rnSt3Am: Int
+    rnSt3Pm: Int
+    rnSt4Am: Int
+    rnSt4Pm: Int
+    rnSt5Am: Int
+    rnSt5Pm: Int
+    rnSt6Am: Int
+    rnSt6Pm: Int
+    rnSt7Am: Int
+    rnSt7Pm: Int
+    rnSt8: Int
+    rnSt9: Int
+    rnSt10: Int
     wf3Am: String
     wf3Pm: String
     wf4Am: String
