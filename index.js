@@ -10,6 +10,10 @@ const MY_API_KEY = process.env.API_KEY;
 const MEDIUM_WEATHER_LAND_WEATHER =
   "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst";
 
+//중기 기온 예보
+const MEDIUM_TEMP =
+  "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa";
+
 //나이스 급식 정보 패쓰
 const MEAL_PATH_BASIC = "https://open.neis.go.kr/hub/mealServiceDietInfo";
 
@@ -29,6 +33,57 @@ const FOCAST_WEATHER_GUESS_PATH_BASIC =
 
 const typeDefs = `#graphql
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
+  type MediumTemp{
+    regId:String            
+    taMin3: Int
+    taMin3Low: Int
+    taMin3High: Int
+    taMax3: Int
+    taMax3Low: Int
+    taMax3High: Int
+    taMin4: Int
+    taMin4Low: Int
+    taMin4High: Int
+    taMax4: Int
+    taMax4Low: Int
+    taMax4High: Int
+    taMin5: Int
+    taMin5Low: Int
+    taMin5High: Int
+    taMax5: Int
+    taMax5Low: Int
+    taMax5High: Int
+    taMin6: Int
+    taMin6Low: Int
+    taMin6High: Int
+    taMax6: Int
+    taMax6Low: Int
+    taMax6High: Int
+    taMin7: Int
+    taMin7Low: Int
+    taMin7High: Int
+    taMax7: Int
+    taMax7Low: Int
+    taMax7High: Int
+    taMin8: Int
+    taMin8Low: Int
+    taMin8High: Int
+    taMax8: Int
+    taMax8Low: Int
+    taMax8High: Int
+    taMin9: Int
+    taMin9Low: Int
+    taMin9High: Int
+    taMax9: Int
+    taMax9Low: Int
+    taMax9High: Int
+    taMin10: Int
+    taMin10Low: Int
+    taMin10High: Int
+    taMax10: Int
+    taMax10Low: Int
+    taMax10High: Int
+  }
   type MediumLand{
     regId: String
     rnSt3Am: Int
@@ -113,6 +168,7 @@ const typeDefs = `#graphql
     allWeather:[Weather]
     allWeatherGuess:[WeatherGuess]
     mediumLand:MediumLand
+    mediumTemp:MediumTemp
     
   }
 `;
@@ -162,6 +218,19 @@ const resolvers = {
 
       return fetch(
         `${MEDIUM_WEATHER_LAND_WEATHER}?serviceKey=${MY_API_KEY}&numOfRows=10&dataType=json&regId=11D10000&tmFc=${today}0600`
+      )
+        .then((response) => response.json())
+        .then((r) => {
+          const finalResult = r.response.body.items.item[0];
+          console.log(finalResult);
+          return finalResult;
+        });
+    },
+    mediumTemp() {
+      const today = dayjs().format("YYYYMMDD");
+
+      return fetch(
+        `${MEDIUM_TEMP}?serviceKey=${MY_API_KEY}&numOfRows=10&dataType=json&regId=11D10401&tmFc=${today}0600`
       )
         .then((response) => response.json())
         .then((r) => {
