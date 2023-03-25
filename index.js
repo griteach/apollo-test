@@ -6,6 +6,10 @@ import dayjs from "dayjs";
 
 const MY_API_KEY = process.env.API_KEY;
 
+//중기육상예보
+const MEDIUM_WEATHER_LAND_WEATHER =
+  "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst";
+
 //나이스 급식 정보 패쓰
 const MEAL_PATH_BASIC = "https://open.neis.go.kr/hub/mealServiceDietInfo";
 
@@ -25,6 +29,36 @@ const FOCAST_WEATHER_GUESS_PATH_BASIC =
 
 const typeDefs = `#graphql
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
+  type MediumLand{
+    regId: String
+    rnSt3Am: Number
+    rnSt3Pm: Number
+    rnSt4Am: Number
+    rnSt4Pm: Number
+    rnSt5Am: Number
+    rnSt5Pm: Number
+    rnSt6Am: Number
+    rnSt6Pm: Number
+    rnSt7Am: Number
+    rnSt7Pm: Number
+    rnSt8: Number
+    rnSt9: Number
+    rnSt10: Number
+    wf3Am: String
+    wf3Pm: String
+    wf4Am: String
+    wf4Pm: String
+    wf5Am: String
+    wf5Pm: String
+    wf6Am: String
+    wf6Pm: String
+    wf7Am: String
+    wf7Pm: String
+    wf8: String
+    wf9: String
+    wf10: String
+  }
+  
   type Dust {
     id: String
     stationName: String
@@ -78,6 +112,7 @@ const typeDefs = `#graphql
     dust(stationName:String!):Dust
     allWeather:[Weather]
     allWeatherGuess:[WeatherGuess]
+    meduimLand:MediumLand
     
   }
 `;
@@ -120,6 +155,19 @@ const resolvers = {
         .then((r) => {
           console.log("allWeather result fetching complete");
           return r;
+        });
+    },
+    mediumLand() {
+      const today = dayjs().format("YYYYMMDD");
+
+      return fetch(
+        `${MEDIUM_WEATHER_LAND_WEATHER}?serviceKey=${MY_API_KEY}&numOfRows=10&returnType=JSON&regId=11D10000&tmFc=${today}0600`
+      )
+        .then((response) => response.json())
+        .then((r) => {
+          const finalResult = r.response.body.items.item[0];
+          console.log(finalResult);
+          return finalResult;
         });
     },
     allDusts() {
