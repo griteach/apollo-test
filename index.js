@@ -112,7 +112,7 @@ const typeDefs = `#graphql
     dust(stationName:String!):Dust
     allWeather:[Weather]
     allWeatherGuess:[WeatherGuess]
-    meduimLand:MediumLand
+    mediumLand:MediumLand
     
   }
 `;
