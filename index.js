@@ -112,7 +112,7 @@ const typeDefs = `#graphql
     dust(stationName:String!):Dust
     allWeather:[Weather]
     allWeatherGuess:[WeatherGuess]
-    mediumLand:MediumLand
+    mediumLand:[MediumLand]
     
   }
 `;
@@ -165,7 +165,7 @@ const resolvers = {
       )
         .then((response) => response.json())
         .then((r) => {
-          const finalResult = r.response.body.items.item[0];
+          const finalResult = r.response.body.items.item;
           console.log(finalResult);
           return finalResult;
         });
