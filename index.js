@@ -161,7 +161,7 @@ const resolvers = {
       const today = dayjs().format("YYYYMMDD");
 
       return fetch(
-        `${MEDIUM_WEATHER_LAND_WEATHER}?serviceKey=${MY_API_KEY}&numOfRows=10&returnType=json&regId=11D10000&tmFc=${today}0600`
+        `${MEDIUM_WEATHER_LAND_WEATHER}?serviceKey=${MY_API_KEY}&numOfRows=10&dataType=json&regId=11D10000&tmFc=${today}0600`
       )
         .then((response) => response.json())
         .then((r) => {
@@ -218,7 +218,7 @@ const server = new ApolloServer({
 //  2. installs your ApolloServer instance as middleware
 //  3. prepares your app to handle incoming requests
 const { url } = await startStandaloneServer(server, {
-  listen: { port: 5000 },
+  listen: { port: 50001 },
 });
 
 console.log(`🚀  Server ready at: ${url}`);
