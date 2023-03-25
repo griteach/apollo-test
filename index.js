@@ -161,7 +161,7 @@ const resolvers = {
       const today = dayjs().format("YYYYMMDD");
 
       return fetch(
-        `${MEDIUM_WEATHER_LAND_WEATHER}?serviceKey=${MY_API_KEY}&numOfRows=10&returnType=JSON&regId=11D10000&tmFc=${today}0600`
+        `${MEDIUM_WEATHER_LAND_WEATHER}?serviceKey=${MY_API_KEY}&numOfRows=10&returnType=json&regId=11D10000&tmFc=${today}0600`
       )
         .then((response) => response.json())
         .then((r) => {
