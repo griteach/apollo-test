@@ -167,6 +167,7 @@ const typeDefs = `#graphql
     dust(stationName:String!):Dust
     allWeather:[Weather]
     allWeatherGuess:[WeatherGuess]
+    
     mediumLand:MediumLand
     mediumTemp:MediumTemp
     
@@ -183,17 +184,7 @@ const resolvers = {
         `${FOCAST_WEATHER_GUESS_PATH_BASIC}?serviceKey=${MY_API_KEY}&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${today}&base_time=0200&nx=75&ny=125`
       )
         .then((response) => response.json())
-        .then((r) => r.response.body.items.item)
-        .then((r) => {
-          const reverseResult = r.filter((item) => {
-            if (item.fcstDate === today) {
-              return item;
-            }
-          });
-          console.log("단기예보 fetching complete");
-
-          return reverseResult;
-        });
+        .then((r) => r.response.body.items.item);
     },
     allWeather() {
       const today = dayjs().format("YYYYMMDD");
@@ -287,7 +278,11 @@ const server = new ApolloServer({
 //  2. installs your ApolloServer instance as middleware
 //  3. prepares your app to handle incoming requests
 const { url } = await startStandaloneServer(server, {
+  // Real Server
   listen: { port: 5000 },
+
+  // Dev Server
+  // listen: { port: 5001 },
 });
 
 console.log(`🚀  Server ready at: ${url}`);
