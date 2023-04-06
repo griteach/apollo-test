@@ -6,6 +6,13 @@ import dayjs from "dayjs";
 
 const MY_API_KEY = process.env.API_KEY;
 
+const NEIS_API_KEY = process.env.NEIS_KEY;
+
+//나이스 급식정보
+const ATPT_OFCDC_SC_CODE = "K10";
+const SD_SCHUL_CODE = "7891019";
+const MMEAL_SC_CODE = "2";
+
 //중기육상예보
 const MEDIUM_WEATHER_LAND_WEATHER =
   "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst";
@@ -158,6 +165,27 @@ const typeDefs = `#graphql
     obsrValue: String
 
   }
+ type Meal {
+    date: String
+    menu: [String]
+  }
+  
+  # type Meal{
+  #   ATPT_OFCDC_SC_CODE:String
+  #   ATPT_OFCDC_SC_NM:String
+  #   SD_SCHUL_CODE:String
+  #   SCHUL_NM:String
+  #   MMEAL_SC_CODE:String
+  #   MMEAL_SC_NM:String
+  #   MLSV_YMD:String
+  #   MLSV_FGR:String
+  #   DDISH_NM:String
+  #   ORPLC_INFO:String
+  #   CAL_INFO:String
+  #   NTR_INFO:String
+  #   MLSV_FROM_YMD:String
+  #   MLSV_TO_YMD:String
+  # }
   # The "Query" type is special: it lists all of the available queries that
   # clients can execute, along with the return type for each. In this
   # case, the "books" query returns an array of zero or more Books (defined above).
@@ -167,7 +195,7 @@ const typeDefs = `#graphql
     dust(stationName:String!):Dust
     allWeather:[Weather]
     allWeatherGuess:[WeatherGuess]
-    
+    lunch(schoolCode: String!, officeCode: String!): Meal
     mediumLand:MediumLand
     mediumTemp:MediumTemp
     
@@ -178,6 +206,14 @@ const typeDefs = `#graphql
 // This resolver retrieves books from the "books" array above.
 const resolvers = {
   Query: {
+    lunch: async (_, { schoolCode, officeCode }) => {
+      const today = dayjs().format("YYYYMMDD");
+      const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?ATPT_OFCDC_SC_CODE=${officeCode}&SD_SCHUL_CODE=${schoolCode}&MLSV_YMD=${today}&Type=json&KEY=${NEIS_API_KEY}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      const lunch = data.mealServiceDietInfo[1].row[0].DDISH_NM.split(", ");
+      return { date: today, menu: lunch };
+    },
     allWeatherGuess() {
       const today = dayjs().format("YYYYMMDD");
       return fetch(
@@ -279,10 +315,10 @@ const server = new ApolloServer({
 //  3. prepares your app to handle incoming requests
 const { url } = await startStandaloneServer(server, {
   // Real Server
-  listen: { port: 5000 },
+  // listen: { port: 5000 },
 
   // Dev Server
-  // listen: { port: 5001 },
+  listen: { port: 5001 },
 });
 
 console.log(`🚀  Server ready at: ${url}`);
