@@ -168,6 +168,8 @@ const typeDefs = `#graphql
  type Meal {
     date: String
     menu: [String]
+    cal:String
+    ntr:[String]
   }
   
   # type Meal{
@@ -213,10 +215,15 @@ const resolvers = {
       const data = await response.json();
       const lunch =
         data.mealServiceDietInfo[1].row[0].DDISH_NM.split(/, |<br\/>/);
+      const cal = data.mealServiceDietInfo[1].row[0].CAL_INFO;
+      const ntr =
+        data.mealServiceDietInfo[1].row[0].NTR_INFO.split(/<br\s*\/?>/g);
       console.log("lunch is called.");
       console.log("lunch : ", lunch);
-      console.log("lunch's length", lunch.length);
-      return { date: today, menu: lunch };
+      console.log("cal : ", cal);
+      console.log("ntr : ", ntr);
+
+      return { date: today, menu: lunch, cal: cal, ntr: ntr };
     },
     allWeatherGuess() {
       const today = dayjs().format("YYYYMMDD");
@@ -319,10 +326,10 @@ const server = new ApolloServer({
 //  3. prepares your app to handle incoming requests
 const { url } = await startStandaloneServer(server, {
   // Real Server
-  listen: { port: 5000 },
+  // listen: { port: 5000 },
 
   // Dev Server
-  // listen: { port: 5001 },
+  listen: { port: 5001 },
 });
 
 console.log(`🚀  Server ready at: ${url}`);
