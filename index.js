@@ -326,10 +326,10 @@ const server = new ApolloServer({
 //  3. prepares your app to handle incoming requests
 const { url } = await startStandaloneServer(server, {
   // Real Server
-  // listen: { port: 5000 },
+  listen: { port: 5000 },
 
   // Dev Server
-  listen: { port: 5001 },
+  // listen: { port: 5001 },
 });
 
 console.log(`🚀  Server ready at: ${url}`);
