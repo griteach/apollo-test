@@ -211,7 +211,11 @@ const resolvers = {
       const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?ATPT_OFCDC_SC_CODE=${officeCode}&SD_SCHUL_CODE=${schoolCode}&MLSV_YMD=${today}&Type=json&KEY=${NEIS_API_KEY}`;
       const response = await fetch(url);
       const data = await response.json();
-      const lunch = data.mealServiceDietInfo[1].row[0].DDISH_NM.split(", ");
+      const lunch =
+        data.mealServiceDietInfo[1].row[0].DDISH_NM.split(/, |<br\/>/);
+      console.log("lunch is called.");
+      console.log("lunch : ", lunch);
+      console.log("lunch's length", lunch.length);
       return { date: today, menu: lunch };
     },
     allWeatherGuess() {
@@ -249,7 +253,7 @@ const resolvers = {
         .then((response) => response.json())
         .then((r) => {
           const finalResult = r.response.body.items.item[0];
-          console.log(finalResult);
+
           return finalResult;
         });
     },
@@ -262,7 +266,7 @@ const resolvers = {
         .then((response) => response.json())
         .then((r) => {
           const finalResult = r.response.body.items.item[0];
-          console.log(finalResult);
+
           return finalResult;
         });
     },
