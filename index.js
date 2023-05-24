@@ -13,6 +13,18 @@ const ATPT_OFCDC_SC_CODE = "K10";
 const SD_SCHUL_CODE = "7891019";
 const MMEAL_SC_CODE = "2";
 
+//나이스 급식 정보 패쓰
+const MEAL_PATH_BASIC = "https://open.neis.go.kr/hub/mealServiceDietInfo";
+
+//나이스 학사일정 정보 패쓰
+const SCHEDULE_PATH_BASIC = "https://open.neis.go.kr/hub/SchoolSchedule";
+
+//특일 정보
+//기념일 정보
+const ANNIVERSARY_INFO =
+  "https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getAnniversaryInfo";
+//?No=1&numOfRows=10&solYear=2023&solMonth=05
+
 //중기육상예보
 const MEDIUM_WEATHER_LAND_WEATHER =
   "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst";
@@ -20,9 +32,6 @@ const MEDIUM_WEATHER_LAND_WEATHER =
 //중기 기온 예보
 const MEDIUM_TEMP =
   "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa";
-
-//나이스 급식 정보 패쓰
-const MEAL_PATH_BASIC = "https://open.neis.go.kr/hub/mealServiceDietInfo";
 
 //미세먼지 기본 패쓰
 const DUST_PATH_BASIC = "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc";
@@ -171,6 +180,18 @@ const typeDefs = `#graphql
     cal:String
     ntr:[String]
   }
+  type Schedule {
+    date: String
+    schedule:[String]
+  }
+
+  type AnniversaryInfo{
+    dateKind:String
+    dateName:String
+    isHoliday:String
+    locdate:Int
+    seq:Int
+  }
   
   # type Meal{
   #   ATPT_OFCDC_SC_CODE:String
@@ -198,8 +219,10 @@ const typeDefs = `#graphql
     allWeather:[Weather]
     allWeatherGuess:[WeatherGuess]
     lunch(schoolCode: String!, officeCode: String!): Meal
+    schedule(schoolCode: String!, officeCode: String!): Schedule
     mediumLand:MediumLand
     mediumTemp:MediumTemp
+    anniversaryInfo:[AnniversaryInfo]
     
   }
 `;
@@ -208,9 +231,21 @@ const typeDefs = `#graphql
 // This resolver retrieves books from the "books" array above.
 const resolvers = {
   Query: {
+    anniversaryInfo() {
+      const year = dayjs().format("YYYY");
+      const month = dayjs().format("MM");
+
+      console.log(year, month);
+      return fetch(
+        `${ANNIVERSARY_INFO}?serviceKey=${MY_API_KEY}&pageNo=1&numOfRows=10&solYear=${year}&solMonth=${month}&_type=json`
+      )
+        .then((r) => r.json())
+        .then((r) => r.response.body.items.item);
+    },
+
     lunch: async (_, { schoolCode, officeCode }) => {
       const today = dayjs().format("YYYYMMDD");
-      const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?ATPT_OFCDC_SC_CODE=${officeCode}&SD_SCHUL_CODE=${schoolCode}&MLSV_YMD=${today}&Type=json&KEY=${NEIS_API_KEY}`;
+      const url = `${MEAL_PATH_BASIC}?ATPT_OFCDC_SC_CODE=${officeCode}&SD_SCHUL_CODE=${schoolCode}&MLSV_YMD=${today}&Type=json&KEY=${NEIS_API_KEY}`;
       const response = await fetch(url);
       const data = await response.json();
       const lunch =
@@ -224,6 +259,17 @@ const resolvers = {
       console.log("ntr : ", ntr);
 
       return { date: today, menu: lunch, cal: cal, ntr: ntr };
+    },
+    schedule: async (_, { schoolCode, officeCode }) => {
+      const today = dayjs().format("YYYYMMDD");
+      const url = `${SCHEDULE_PATH_BASIC}?ATPT_OFCDC_SC_CODE=${officeCode}&SD_SCHUL_CODE=${schoolCode}&Type=json&KEY=${NEIS_API_KEY}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      const schedule = data.SchoolSchedule.find();
+      console.log("schedule is called.");
+      console.log("schedule : ", data);
+
+      return { date: today, schedule: schedule };
     },
     allWeatherGuess() {
       const today = dayjs().format("YYYYMMDD");
