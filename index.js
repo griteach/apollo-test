@@ -10,7 +10,7 @@ const NEIS_API_KEY = process.env.NEIS_KEY;
 
 //나이스 급식정보
 const ATPT_OFCDC_SC_CODE = "K10";
-const SD_SCHUL_CODE = "7891019";
+const SD_SCHUL_CODE = "7892021";
 const MMEAL_SC_CODE = "2";
 
 //나이스 급식 정보 패쓰
@@ -179,6 +179,8 @@ const typeDefs = `#graphql
     menu: [String]
     cal:String
     ntr:[String]
+    
+    MLSV_YMD:String
   }
   type Schedule {
     date: String
@@ -193,22 +195,7 @@ const typeDefs = `#graphql
     seq:Int
   }
   
-  # type Meal{
-  #   ATPT_OFCDC_SC_CODE:String
-  #   ATPT_OFCDC_SC_NM:String
-  #   SD_SCHUL_CODE:String
-  #   SCHUL_NM:String
-  #   MMEAL_SC_CODE:String
-  #   MMEAL_SC_NM:String
-  #   MLSV_YMD:String
-  #   MLSV_FGR:String
-  #   DDISH_NM:String
-  #   ORPLC_INFO:String
-  #   CAL_INFO:String
-  #   NTR_INFO:String
-  #   MLSV_FROM_YMD:String
-  #   MLSV_TO_YMD:String
-  # }
+  
   # The "Query" type is special: it lists all of the available queries that
   # clients can execute, along with the return type for each. In this
   # case, the "books" query returns an array of zero or more Books (defined above).
@@ -237,7 +224,7 @@ const resolvers = {
 
       console.log(year, month);
       return fetch(
-        `${ANNIVERSARY_INFO}?serviceKey=${MY_API_KEY}&pageNo=1&numOfRows=10&solYear=${year}&solMonth=${month}&_type=json`
+        `${ANNIVERSARY_INFO}?serviceKey=${MY_API_KEY}&pageNo=1&numOfRows=100&solYear=${year}&solMonth=${month}&_type=json`
       )
         .then((r) => r.json())
         .then((r) => r.response.body.items.item);
@@ -245,15 +232,29 @@ const resolvers = {
 
     lunch: async (_, { schoolCode, officeCode }) => {
       const today = dayjs().format("YYYYMMDD");
-      const url = `${MEAL_PATH_BASIC}?ATPT_OFCDC_SC_CODE=${officeCode}&SD_SCHUL_CODE=${schoolCode}&MLSV_YMD=${today}&Type=json&KEY=${NEIS_API_KEY}`;
+      console.log("today", today);
+      const url = `${MEAL_PATH_BASIC}?ATPT_OFCDC_SC_CODE=${officeCode}&SD_SCHUL_CODE=${schoolCode}&Type=json&Key=${NEIS_API_KEY}`;
+      //&MLSV_YMD=${today}
       const response = await fetch(url);
       const data = await response.json();
+
+      // const todayLunch = data.mealServiceDietInfo[1].row.find(
+      //   (meal) => meal.MLSV_YMD === today
+      // );
+      // console.log("todayLunch : ", todayLunch);
+
       const lunch =
         data.mealServiceDietInfo[1].row[0].DDISH_NM.split(/, |<br\/>/);
       const cal = data.mealServiceDietInfo[1].row[0].CAL_INFO;
       const ntr =
         data.mealServiceDietInfo[1].row[0].NTR_INFO.split(/<br\s*\/?>/g);
-      console.log("lunch is called.");
+
+      console.log(
+        "lunch is called.",
+        data.mealServiceDietInfo[1].row.find(
+          (meal) => meal.MLSV_YMD === "20230616"
+        )
+      );
       console.log("lunch : ", lunch);
       console.log("cal : ", cal);
       console.log("ntr : ", ntr);
@@ -293,7 +294,6 @@ const resolvers = {
           result.map((item, index) => ({ id: index + 1, ...item }))
         )
         .then((r) => {
-          console.log("allWeather result fetching complete");
           return r;
         });
     },
@@ -352,7 +352,6 @@ const resolvers = {
         .then((r) => {
           const result = r.find((item) => item.stationName === stationName);
 
-          console.log("측정소 미세먼지 결과 출력", result);
           return result;
         });
     },
@@ -372,10 +371,10 @@ const server = new ApolloServer({
 //  3. prepares your app to handle incoming requests
 const { url } = await startStandaloneServer(server, {
   // Real Server
-  listen: { port: 5000 },
+  // listen: { port: 5000 },
 
   // Dev Server
-  // listen: { port: 5001 },
+  listen: { port: 5001 },
 });
 
 console.log(`🚀  Server ready at: ${url}`);
