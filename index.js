@@ -179,7 +179,6 @@ const typeDefs = `#graphql
     menu: [String]
     cal:String
     ntr:[String]
-    
     MLSV_YMD:String
   }
   type Schedule {
@@ -233,8 +232,8 @@ const resolvers = {
     lunch: async (_, { schoolCode, officeCode }) => {
       const today = dayjs().format("YYYYMMDD");
       console.log("today", today);
-      const url = `${MEAL_PATH_BASIC}?ATPT_OFCDC_SC_CODE=${officeCode}&SD_SCHUL_CODE=${schoolCode}&Type=json&Key=${NEIS_API_KEY}`;
-      //&MLSV_YMD=${today}
+      const url = `${MEAL_PATH_BASIC}?ATPT_OFCDC_SC_CODE=${officeCode}&SD_SCHUL_CODE=${schoolCode}&Type=json&Key=${NEIS_API_KEY}&MLSV_YMD=${today}`;
+
       const response = await fetch(url);
       const data = await response.json();
 
@@ -249,12 +248,15 @@ const resolvers = {
       const ntr =
         data.mealServiceDietInfo[1].row[0].NTR_INFO.split(/<br\s*\/?>/g);
 
-      console.log(
-        "lunch is called.",
-        data.mealServiceDietInfo[1].row.find(
-          (meal) => meal.MLSV_YMD === "20230616"
-        )
-      );
+      const calledDate = data.mealServiceDietInfo[1].row[0].MLSV_YMD;
+      console.log("calledDate: ", calledDate);
+
+      // console.log(
+      //   "lunch is called.",
+      //   data.mealServiceDietInfo[1].row.find(
+      //     (meal) => meal.MLSV_YMD === "20230607"
+      //   )
+      // );
       console.log("lunch : ", lunch);
       console.log("cal : ", cal);
       console.log("ntr : ", ntr);
